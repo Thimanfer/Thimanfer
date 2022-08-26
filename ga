@@ -1,0 +1,32 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=505,M=N*N;
+int n,k,cnt,nx[M],ny[M],mx[M],my[M],s[N][N];bool b[M];
+inline void upd(int x,int z,int y,int w,int h){
+	x=max(x,1);y=max(y,1);z=min(z,n-h);w=min(w,n-h);
+	if(x<=z&&y<=w)s[x][y]++,s[x][w+1]--,s[z+1][y]--,s[z+1][w+1]++;
+}
+int main(){
+	int x;
+	scanf("%d%d",&n,&k);
+	for(int i=1;i<=n*n;i++)nx[i]=ny[i]=M;
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=n;j++){
+			scanf("%d",&x),b[x]=1;
+			nx[x]=min(nx[x],i),mx[x]=max(mx[x],i);
+			ny[x]=min(ny[x],j),my[x]=max(my[x],j);
+		}
+	for(int i=1;i<=n*n;i++)cnt+=b[i];
+	if(cnt<=k)return printf("%d\n",k-cnt),0;
+	for(int h=0;h<n;h++){
+		for(int i=1;i<=n*n;i++)
+			if(nx[i]!=M)upd(mx[i]-h,nx[i],my[i]-h,ny[i],h);
+		for(int i=1;i<=n;i++)
+			for(int j=1;j<=n;j++){
+				s[i][j]+=s[i-1][j]+s[i][j-1]-s[i-1][j-1];
+				if(cnt-s[i][j]==k||cnt-s[i][j]==k-1)return puts("1"),0;
+			}
+		memset(s,0,sizeof(s));
+	}
+	puts("2");
+}
